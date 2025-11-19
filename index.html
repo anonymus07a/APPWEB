@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generador de contraseñas — Hakin Theme</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --panel: #071012;
+      --card: #071012;
+      --muted: #7bd389;
+      --accent: #00ff66;
+      --good: #00cc66;
+      --warn: #ffb86b;
+      --bad: #ff4d4d;
+      --glass: rgba(255,255,255,0.03);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Roboto Mono', 'Fira Code', monospace;
+      background: radial-gradient(ellipse at 10% 10%, rgba(0,255,102,0.03), transparent 10%), linear-gradient(180deg, #000 0%, #051014 100%);
+      color: var(--muted);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(0,0,0,0.7), rgba(3,7,9,0.85));
+      max-width: 800px;
+      width: 100%;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,255,102,0.15);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(0,255,102,0.06);
+    }
+
+    p.lead {
+      margin: 0 0 18px;
+      color: #96f6b8cc;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #8ff8b1;
+      margin-bottom: 6px;
+    }
+
+    input[type='number'], input[type='range'], select, .controls {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,255,102,0.1);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      color: var(--muted);
+    }
+
+    .checkboxes {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .checkboxes label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,255,102,0.1);
+      color: #aaf9c9;
+      font-size: 0.85rem;
+    }
+
+    button {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(0,255,102,0.3);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      text-shadow: 0 0 6px rgba(0,255,102,0.1);
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background: rgba(0,255,102,0.1);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .output {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .password-box {
+      padding: 14px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(5,7,9,0.6));
+      color: var(--accent);
+      font-family: monospace;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(0,255,102,0.15);
+      overflow-wrap: break-word;
+      word-break: break-all;
+    }
+
+    .meter {
+      height: 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+      border: 1px solid rgba(0,255,102,0.08);
+    }
+
+    .meter > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--good);
+      box-shadow: 0 4px 14px rgba(0,255,102,0.15);
+      transition: width 0.3s ease;
+    }
+
+    .meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .small {
+      font-size: 0.85rem;
+      color: #93f8c6;
+    }
+
+    section {
+      margin-top: 18px;
+      color: #86f2b9;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    section p {
+      color: #00ccff;
+      margin: 8px 0 0;
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      .card { padding: 18px; }
+      h1 { font-size: 1.3rem; text-align: center; }
+      .checkboxes { flex-direction: column; }
+      .output { flex-direction: column; }
+      button { font-size: 0.95rem; }
+    }
+
+    @media (max-width: 480px) {
+      .password-box { font-size: 0.9rem; padding: 10px; }
+      .meta { flex-direction: column; align-items: flex-start; }
+      label { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>🔐 Generador de contraseñas</h1>
+    <p class="lead">Genera contraseñas seguras directamente en tu navegador usando <code>crypto.getRandomValues</code>.</p>
+
+    <div class="row">
+      <div class="col">
+        <label for="length">Longitud: <span id="lenVal">16</span></label>
+        <input id="length" type="range" min="4" max="128" value="16" />
+      </div>
+      <div class="col">
+        <label for="lengthNum">Longitud (número)</label>
+        <input id="lengthNum" type="number" min="4" max="128" value="16" />
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="checkboxes">
+      <label><input id="lower" type="checkbox" checked /> Minúsculas (a-z)</label>
+      <label><input id="upper" type="checkbox" checked /> Mayúsculas (A-Z)</label>
+      <label><input id="numbers" type="checkbox" checked /> Números (0-9)</label>
+      <label><input id="symbols" type="checkbox" /> Caracteres especiales</label>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="row">
+      <div class="col">
+        <button id="generate">Generar</button>
+      </div>
+      <div class="col">
+        <button id="copy" class="secondary">Copiar</button>
+      </div>
+    </div>
+
+    <div class="output">
+      <div class="password-box" id="passBox"><span id="password">—</span></div>
+    </div>
+
+    <div class="meter"><i id="meterFill"></i></div>
+    <div class="meta">
+      <div class="small">Seguridad: <strong id="strengthLabel">—</strong></div>
+      <div class="small">Entropía: <strong id="entropy">—</strong> bits</div>
+      <div class="small">Pool: <strong id="poolSize">—</strong> caracteres</div>
+    </div>
+
+    <section>
+      <strong>Nota:</strong> Este generador funciona totalmente en tu navegador; ninguna contraseña se envía a servidores externos.
+      <p><b>Created by Znox</b></p>
+    </section>
+  </main>
+
+  <script>
+    const SETS = {
+      lower: 'abcdefghijklmnopqrstuvwxyz',
+      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      numbers: '0123456789',
+      symbols: '!@#$%^&*()-_=+[]{};:,.<>/?|~'
+    };
+
+    const length = document.getElementById('length');
+    const lengthNum = document.getElementById('lengthNum');
+    const lenVal = document.getElementById('lenVal');
+    const chkLower = document.getElementById('lower');
+    const chkUpper = document.getElementById('upper');
+    const chkNumbers = document.getElementById('numbers');
+    const chkSymbols = document.getElementById('symbols');
+    const btnGen = document.getElementById('generate');
+    const btnCopy = document.getElementById('copy');
+    const passwordEl = document.getElementById('password');
+    const meterFill = document.getElementById('meterFill');
+    const strengthLabel = document.getElementById('strengthLabel');
+    const entropyEl = document.getElementById('entropy');
+    const poolSizeEl = document.getElementById('poolSize');
+
+    length.addEventListener('input', ()=>{ lengthNum.value = length.value; lenVal.textContent = length.value; });
+    lengthNum.addEventListener('input', ()=>{ let v = Math.max(4, Math.min(128, Number(lengthNum.value)||4)); length.value=v; lengthNum.value=v; lenVal.textContent=v; });
+
+    function ensureAtLeastOne() {
+      if(!chkLower.checked && !chkUpper.checked && !chkNumbers.checked && !chkSymbols.checked) chkLower.checked = true;
+    }
+    [chkLower,chkUpper,chkNumbers,chkSymbols].forEach(chk => chk.addEventListener('change', ensureAtLeastOne));
+
+    function secureRandomInt(max) {
+      const array = new Uint32Array(1);
+      window.crypto.getRandomValues(array);
+      return array[0] % max;
+    }
+
+    function buildCharset(opts) {
+      let set = '';
+      if(opts.lower) set += SETS.lower;
+      if(opts.upper) set += SETS.upper;
+      if(opts.numbers) set += SETS.numbers;
+      if(opts.symbols) set += SETS.symbols;
+      return Array.from(new Set(set)).join('');
+    }
+
+    function generatePassword(len, charset) {
+      if(!charset || charset.length===0) return '';
+      let out = '';
+      const n = charset.length;
+      const maxValid = Math.floor(0xFFFFFFFF / n) * n;
+      while(out.length < len){
+        const r = new Uint32Array(1);
+        window.crypto.getRandomValues(r);
+        if(r[0] >= maxValid) continue;
+        out += charset[r[0] % n];
+      }
+      return out;
+    }
+
+    function estimateEntropy(len, poolSize){
+      if(poolSize <= 1) return 0;
+      const bitsPerChar = Math.log2(poolSize);
+      return Math.round(bitsPerChar * len * 100) / 100;
+    }
+
+    function updateMeter(entropy){
+      const percent = Math.min(100, Math.round((entropy / 60) * 100));
+      meterFill.style.width = percent + '%';
+      let color = 'var(--bad)', label = 'Muy débil';
+      if(entropy < 28){ color='var(--bad)'; label='Muy débil'; }
+      else if(entropy < 35){ color='var(--warn)'; label='Débil'; }
+      else if(entropy < 60){ color='var(--good)'; label='Aceptable'; }
+      else { color='var(--good)'; label='Fuerte'; }
+      meterFill.style.background = color;
+      strengthLabel.textContent = label;
+    }
+
+    btnGen.addEventListener('click', ()=>{
+      ensureAtLeastOne();
+      const opts = {
+        lower: chkLower.checked,
+        upper: chkUpper.checked,
+        numbers: chkNumbers.checked,
+        symbols: chkSymbols.checked
+      };
+      const len = Number(length.value);
+      const charset = buildCharset(opts);
+      const pass = generatePassword(len, charset);
+      passwordEl.textContent = pass || '—';
+
+      const entropy = estimateEntropy(len, charset.length);
+      entropyEl.textContent = entropy;
+      poolSizeEl.textContent = charset.length || '0';
+      updateMeter(entropy);
+    });
+
+    btnCopy.addEventListener('click', async ()=>{
+      const text = passwordEl.textContent;
+      if(!text || text==='—') return;
+      try {
+        await navigator.clipboard.writeText(text);
+        btnCopy.textContent = 'Copiado ✓';
+        setTimeout(()=>btnCopy.textContent='Copiar',1200);
+      } catch(e) {
+        alert('No se pudo copiar');
+      }
+    });
+
+    btnGen.click();
+  </script>
+</body>
+</html>
